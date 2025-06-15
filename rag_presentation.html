@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Workflow Presentation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .slide {
+            width: 90%;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 40px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            page-break-after: always;
+        }
+        h1 {
+            color: #0066cc;
+            margin-top: 0;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #0066cc;
+        }
+        .two-column {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .column {
+            flex: 1;
+        }
+        .highlight {
+            background-color: #e6f2ff;
+            padding: 15px;
+            border-left: 4px solid #0066cc;
+            margin: 15px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 0.8em;
+            color: #666;
+            text-align: center;
+        }
+        .process-step {
+            background-color: #f0f7ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            position: relative;
+        }
+        .process-step::after {
+            content: "↓";
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            font-size: 20px;
+            color: #0066cc;
+        }
+        .process-step:last-child::after {
+            content: none;
+        }
+        .architecture-diagram {
+            width: 100%;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .architecture-diagram img {
+            max-width: 100%;
+        }
+        .feature-box {
+            background-color: #f0f7ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #0066cc;
+        }
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .nav-button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- Title Slide -->
+    <div class="slide" id="slide1">
+        <h1 style="text-align: center; font-size: 2.5em; margin-top: 100px;">Retrieval Augmented Generation (RAG)</h1>
+        <h2 style="text-align: center; color: #666;">A Modern Approach to AI-Powered Knowledge Systems</h2>
+        <div style="text-align: center; margin-top: 100px;">
+            <p>Department: AI Engineering</p>
+            <p>Date: June 16, 2025</p>
+        </div>
+    </div>
+
+    <!-- What is RAG Slide -->
+    <div class="slide" id="slide2">
+        <h1>What is RAG?</h1>
+        <div class="two-column">
+            <div class="column">
+                <p>Retrieval Augmented Generation (RAG) is an AI architecture that combines:</p>
+                <ul>
+                    <li>Information retrieval from a knowledge base</li>
+                    <li>Text generation using large language models</li>
+                </ul>
+                <div class="highlight">
+                    <p><strong>Key Benefit:</strong> RAG enhances LLM responses with up-to-date, accurate information from your own data sources.</p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="architecture-diagram">
+                    <pre><code>User Query → Retrieval System → 
+    ↓
+Relevant Documents + Query → 
+    ↓
+Language Model → 
+    ↓
+Contextual Response</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why RAG Slide -->
+    <div class="slide" id="slide3">
+        <h1>Why Use RAG?</h1>
+        <div class="two-column">
+            <div class="column">
+                <h2>Limitations of Traditional LLMs</h2>
+                <ul>
+                    <li>Knowledge cutoff dates</li>
+                    <li>No access to proprietary information</li>
+                    <li>Potential for hallucinations</li>
+                    <li>Lack of source attribution</li>
+                </ul>
+            </div>
+            <div class="column">
+                <h2>Benefits of RAG</h2>
+                <ul>
+                    <li>Up-to-date information</li>
+                    <li>Access to private/proprietary data</li>
+                    <li>Reduced hallucinations</li>
+                    <li>Source attribution for transparency</li>
+                    <li>Cost-effective compared to fine-tuning</li>
+                </ul>
+            </div>
+        </div>
+        <div class="highlight">
+            <p><strong>RAG bridges the gap</strong> between general knowledge in LLMs and specific, up-to-date information in your documents.</p>
+        </div>
+    </div>
+
+    <!-- RAG Architecture Slide -->
+    <div class="slide" id="slide4">
+        <h1>Our RAG Architecture</h1>
+        <div class="architecture-diagram">
+            <pre><code>┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  Frontend Layer  │     │    API Layer     │     │  Core Services  │
+│                 │     │                 │     │                 │
+│   Streamlit UI   │────▶│     FastAPI     │────▶│   RAG Service   │
+└─────────────────┘     └─────────────────┘     └────────┬────────┘
+                                                         │
+                                                         ▼
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│     Storage     │     │  Azure OpenAI   │     │Document Processor│
+│                 │◀────│                 │◀────│                 │
+│  Qdrant Vector  │     │  Embeddings &   │     │  Text Chunking  │
+│    Database     │     │   Completions   │     │   & Analysis    │
+└─────────────────┘     └─────────────────┘     └─────────────────┘</code></pre>
+        </div>
+        <div class="highlight">
+            <p>Our implementation uses Azure OpenAI for embeddings and completions, with Qdrant as the vector database for efficient similarity search.</p>
+        </div>
+    </div>
+
+    <!-- Document Processing Slide -->
+    <div class="slide" id="slide5">
+        <h1>Document Processing Workflow</h1>
+        <div class="process-step">
+            <h3>1. Document Upload</h3>
+            <p>User uploads PDF, DOCX, or TXT files through the Streamlit UI</p>
+        </div>
+        <div class="process-step">
+            <h3>2. Text Extraction</h3>
+            <p>Document processor extracts text content based on file type</p>
+        </div>
+        <div class="process-step">
+            <h3>3. Text Chunking</h3>
+            <p>Content is split into manageable chunks with configurable size and overlap</p>
+        </div>
+        <div class="process-step">
+            <h3>4. Embedding Generation</h3>
+            <p>Azure OpenAI generates vector embeddings for each text chunk</p>
+        </div>
+        <div class="process-step">
+            <h3>5. Vector Storage</h3>
+            <p>Embeddings and metadata are stored in Qdrant vector database</p>
+        </div>
+    </div>
+
+    <!-- Query Processing Slide -->
+    <div class="slide" id="slide6">
+        <h1>Query Processing Workflow</h1>
+        <div class="process-step">
+            <h3>1. User Query</h3>
+            <p>User submits a question through the chat interface</p>
+        </div>
+        <div class="process-step">
+            <h3>2. Query Contextualization</h3>
+            <p>Follow-up questions are contextualized based on conversation history</p>
+        </div>
+        <div class="process-step">
+            <h3>3. Semantic Search</h3>
+            <p>Query is converted to embedding and used to find relevant document chunks</p>
+        </div>
+        <div class="process-step">
+            <h3>4. Context Assembly</h3>
+            <p>Retrieved document chunks are assembled into context for the LLM</p>
+        </div>
+        <div class="process-step">
+            <h3>5. Response Generation</h3>
+            <p>Azure OpenAI generates a response based on the query and retrieved context</p>
+        </div>
+    </div>
+
+    <!-- Key Features Slide -->
+    <div class="slide" id="slide7">
+        <h1>Key Features</h1>
+        <div class="two-column">
+            <div class="column">
+                <div class="feature-box">
+                    <h3>Multi-format Document Support</h3>
+                    <p>Process PDF, DOCX, and TXT files with automatic text extraction</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Semantic Search</h3>
+                    <p>Find relevant information based on meaning, not just keywords</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Conversation History</h3>
+                    <p>Support for follow-up questions with conversation context</p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="feature-box">
+                    <h3>Source Attribution</h3>
+                    <p>Responses include references to source documents</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Profile Matching</h3>
+                    <p>Match profiles to requirements based on extracted skills</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Containerized Deployment</h3>
+                    <p>Easy deployment with Docker and Docker Compose</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technical Implementation Slide -->
+    <div class="slide" id="slide8">
+        <h1>Technical Implementation</h1>
+        <div class="two-column">
+            <div class="column">
+                <h3>Backend (FastAPI)</h3>
+                <ul>
+                    <li>Modular service architecture</li>
+                    <li>RESTful API endpoints</li>
+                    <li>Background task processing</li>
+                    <li>Session management</li>
+                </ul>
+                <h3>Vector Database (Qdrant)</h3>
+                <ul>
+                    <li>Efficient similarity search</li>
+                    <li>Metadata storage</li>
+                    <li>Scalable architecture</li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3>Frontend (Streamlit)</h3>
+                <ul>
+                    <li>Interactive chat interface</li>
+                    <li>Document management</li>
+                    <li>Profile matching visualization</li>
+                </ul>
+                <h3>Azure OpenAI Integration</h3>
+                <ul>
+                    <li>Embedding generation</li>
+                    <li>Chat completions</li>
+                    <li>Query contextualization</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Use Cases Slide -->
+    <div class="slide" id="slide9">
+        <h1>Use Cases</h1>
+        <div class="two-column">
+            <div class="column">
+                <div class="feature-box">
+                    <h3>Customer Support</h3>
+                    <p>Answer customer queries based on product documentation, FAQs, and knowledge bases</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Legal Document Analysis</h3>
+                    <p>Extract insights and answer questions about contracts, regulations, and legal documents</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Research Assistant</h3>
+                    <p>Help researchers find relevant information across large collections of papers and reports</p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="feature-box">
+                    <h3>Internal Knowledge Base</h3>
+                    <p>Make company documentation and policies easily accessible to employees</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Talent Matching</h3>
+                    <p>Match candidate profiles to job requirements based on skills and experience</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Content Recommendation</h3>
+                    <p>Suggest relevant content based on user interests and behavior</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Future Enhancements Slide -->
+    <div class="slide" id="slide10">
+        <h1>Future Enhancements</h1>
+        <div class="two-column">
+            <div class="column">
+                <div class="feature-box">
+                    <h3>Advanced Document Processing</h3>
+                    <p>Support for tables, images, and structured data extraction</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Multi-modal RAG</h3>
+                    <p>Incorporate image and audio content into the RAG workflow</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Hybrid Search</h3>
+                    <p>Combine semantic and keyword search for improved retrieval</p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="feature-box">
+                    <h3>User Feedback Loop</h3>
+                    <p>Incorporate user feedback to improve retrieval quality</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Advanced Analytics</h3>
+                    <p>Track usage patterns and query performance</p>
+                </div>
+                <div class="feature-box">
+                    <h3>Enterprise Integration</h3>
+                    <p>Connect with existing enterprise systems and authentication</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conclusion Slide -->
+    <div class="slide" id="slide11">
+        <h1>Conclusion</h1>
+        <div class="highlight" style="text-align: center; padding: 30px;">
+            <h2>RAG combines the best of both worlds:</h2>
+            <p>The knowledge and reasoning capabilities of LLMs with the accuracy and recency of your own data.</p>
+        </div>
+        <div class="two-column" style="margin-top: 40px;">
+            <div class="column">
+                <h3>Benefits Delivered</h3>
+                <ul>
+                    <li>More accurate and contextual responses</li>
+                    <li>Transparent source attribution</li>
+                    <li>Ability to query private data</li>
+                    <li>Reduced hallucinations</li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3>Next Steps</h3>
+                <ul>
+                    <li>Pilot deployment with selected teams</li>
+                    <li>Gather user feedback</li>
+                    <li>Expand document sources</li>
+                    <li>Integrate with existing systems</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thank You Slide -->
+    <div class="slide" id="slide12">
+        <div style="text-align: center; margin-top: 150px;">
+            <h1 style="font-size: 2.5em;">Thank You!</h1>
+            <p style="font-size: 1.2em; margin-top: 50px;">Questions?</p>
+            <div style="margin-top: 100px;">
+                <p>GitHub Repository: <a href="https://github.com/yourusername/rag-chatbot">github.com/yourusername/rag-chatbot</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple navigation script
+        let currentSlide = 1;
+        const totalSlides = 12;
+
+        function showSlide(slideNumber) {
+            // Hide all slides
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.style.display = 'none';
+            });
+            
+            // Show the current slide
+            document.getElementById('slide' + slideNumber).style.display = 'block';
+            currentSlide = slideNumber;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Initialize - show only the first slide
+        showSlide(1);
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Add navigation buttons
+        const nav = document.createElement('div');
+        nav.className = 'navigation';
+        
+        const prevButton = document.createElement('button');
+        prevButton.className = 'nav-button';
+        prevButton.textContent = '←';
+        prevButton.onclick = prevSlide;
+        
+        const nextButton = document.createElement('button');
+        nextButton.className = 'nav-button';
+        nextButton.textContent = '→';
+        nextButton.onclick = nextSlide;
+        
+        nav.appendChild(prevButton);
+        nav.appendChild(nextButton);
+        document.body.appendChild(nav);
+    </script>
+</body>
+</html>
